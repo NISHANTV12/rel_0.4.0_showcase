@@ -16,7 +16,7 @@ import org.tmt.nfiraos.sampleassembly.messages.{SendCommand, WorkerCommand}
 import scala.concurrent.duration.DurationDouble
 import scala.concurrent.{ExecutionContext, Future}
 
-class WorkerActor(ctx: ActorContext[TopLevelActorMessage], loggerFactory: LoggerFactory, componentInfo: ComponentInfo) {
+class Worker(ctx: ActorContext[TopLevelActorMessage], loggerFactory: LoggerFactory, componentInfo: ComponentInfo) {
 
   private val log = loggerFactory.getLogger(ctx)
 
@@ -28,7 +28,7 @@ class WorkerActor(ctx: ActorContext[TopLevelActorMessage], loggerFactory: Logger
         msg match {
           case command: SendCommand =>
             log.info(s"WorkerActor received SendCommand message.")
-            handle(command.hcd)
+            handleCommand(command.hcd)
           case _ => log.error("Unsupported message type")
         }
         Behaviors.same
@@ -38,7 +38,7 @@ class WorkerActor(ctx: ActorContext[TopLevelActorMessage], loggerFactory: Logger
 
   private implicit val submitTimeout: Timeout = Timeout(1000.millis)
 
-  def handle(hcd: CommandService): Unit = {
+  def handleCommand(hcd: CommandService): Unit = {
 
     // Construct Setup command
     val sleepTimeKey: Key[Long]         = KeyType.LongKey.make("SleepTime")

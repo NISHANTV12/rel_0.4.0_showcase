@@ -9,7 +9,7 @@ import csw.messages.scaladsl.TopLevelActorMessage
 import csw.services.command.scaladsl.{CommandResponseManager, CommandService}
 import csw.services.location.scaladsl.LocationService
 import csw.services.logging.scaladsl.{Logger, LoggerFactory}
-import org.tmt.nfiraos.sampleassembly.internal.WorkerActor
+import org.tmt.nfiraos.sampleassembly.internal.Worker
 import org.tmt.nfiraos.sampleassembly.messages.SendCommand
 
 import scala.concurrent.{ExecutionContextExecutor, Future}
@@ -33,7 +33,7 @@ class SampleAssemblyHandlers(
 
   implicit val ec: ExecutionContextExecutor = ctx.executionContext
   private val log: Logger                   = loggerFactory.getLogger
-  val workerActor                           = new WorkerActor(ctx, loggerFactory, componentInfo)
+  val workerActor                           = new Worker(ctx, loggerFactory, componentInfo)
 
   //initialize
   override def initialize(): Future[Unit] = {

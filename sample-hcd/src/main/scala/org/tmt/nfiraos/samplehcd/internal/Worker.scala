@@ -2,6 +2,7 @@ package org.tmt.nfiraos.samplehcd.internal
 
 import akka.actor.typed.ActorRef
 import akka.actor.typed.scaladsl.{ActorContext, Behaviors}
+import csw.framework.scaladsl.CurrentStatePublisher
 import csw.messages.commands.CommandResponse
 import csw.messages.scaladsl.TopLevelActorMessage
 import csw.services.command.scaladsl.CommandResponseManager
