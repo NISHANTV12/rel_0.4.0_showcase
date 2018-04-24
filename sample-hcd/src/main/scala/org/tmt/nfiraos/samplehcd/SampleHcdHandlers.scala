@@ -43,7 +43,7 @@ class SampleHcdHandlers(
 
   //initialize
   override def initialize(): Future[Unit] = async {
-    log.info("In HCD initialize")
+    println("[HCD] Initializing ...")
 //    import java.nio.file.Paths
 //    import csw.services.config.client.scaladsl.ConfigClientFactory
 //    val configClientService = ConfigClientFactory.clientApi(ctx.system.toUntyped, locationService)
@@ -59,14 +59,17 @@ class SampleHcdHandlers(
   override def onLocationTrackingEvent(trackingEvent: TrackingEvent): Unit = {
     log.info(s"TrackingEvent received: ${trackingEvent.connection.name}")
   }
-  override def onShutdown(): Future[Unit] = {
-    log.info("HCD is shutting down")
-    Future.unit
+
+  override def onShutdown(): Future[Unit] = Future {
+    log.info("[HCD] Shutting down...")
+    println("[HCD] Shutting down...")
+    println()
   }
 
   //validate
   override def validateCommand(controlCommand: ControlCommand): CommandResponse = {
-    log.info(s"Validating command: ${controlCommand.commandName.name}")
+    log.info(s"[HCD] Validating received command: ${controlCommand.commandName}")
+    println(s"[HCD] Validating received command: ${controlCommand.commandName}")
     controlCommand.commandName.name match {
       case "sleep" => CommandResponse.Accepted(controlCommand.runId)
       case x       => CommandResponse.Invalid(controlCommand.runId, CommandIssue.UnsupportedCommandIssue(s"Command $x. not supported."))
@@ -75,7 +78,8 @@ class SampleHcdHandlers(
 
   //onSubmit
   override def onSubmit(controlCommand: ControlCommand): Unit = {
-    log.info(s"Handling command: ${controlCommand.commandName}")
+    log.info(s"[HCD] Received command: ${controlCommand.commandName}")
+    println(s"[HCD] Received command: ${controlCommand.commandName}")
 
     controlCommand match {
       case setupCommand: Setup     => onSetup(setupCommand)

@@ -2,7 +2,6 @@ package org.tmt.nfiraos.samplehcd.internal
 
 import akka.actor.typed.ActorRef
 import akka.actor.typed.scaladsl.{ActorContext, Behaviors}
-import csw.framework.scaladsl.CurrentStatePublisher
 import csw.messages.commands.CommandResponse
 import csw.messages.scaladsl.TopLevelActorMessage
 import csw.services.command.scaladsl.CommandResponseManager
@@ -20,10 +19,14 @@ class Worker(
     Behaviors.immutable[WorkerCommand]((_, msg) => {
       msg match {
         case sleep: Sleep =>
-          log.info(s"WorkerActor received sleep command with time of ${sleep.timeInMillis} ms")
+          log.info(s"[HCD] WorkerActor received sleep command with time of ${sleep.timeInMillis} ms")
+          println(s"[HCD] WorkerActor received sleep command with time of ${sleep.timeInMillis} ms")
+          println()
+
           // simulate long running command
           Thread.sleep(sleep.timeInMillis)
           commandResponseManager.addOrUpdateCommand(sleep.runId, CommandResponse.Completed(sleep.runId))
+
         case _ => log.error("Unsupported message type")
       }
       Behaviors.same

@@ -27,7 +27,7 @@ class Worker(ctx: ActorContext[TopLevelActorMessage], loggerFactory: LoggerFacto
       Behaviors.immutable[WorkerCommand]((_, msg) => {
         msg match {
           case command: SendCommand =>
-            log.info(s"WorkerActor received SendCommand message.")
+            log.info(s"[Assembly] WorkerActor received sleep command")
             handleCommand(command.hcd)
           case _ => log.error("Unsupported message type")
         }
@@ -50,6 +50,8 @@ class Worker(ctx: ActorContext[TopLevelActorMessage], loggerFactory: LoggerFacto
       case _: Accepted =>
         // If valid, subscribe to the HCD's CommandResponseManager
         // This explicit timeout indicates how long to wait for completion
+        log.info(s"[Assembly] Sending ${setupCommand.commandName} command to HCD")
+        println(s"[Assembly] Sending ${setupCommand.commandName} command to HCD")
         hcd.subscribe(setupCommand.runId)(10000.seconds)
       case x =>
         log.error("Sleep command invalid")
@@ -58,9 +60,11 @@ class Worker(ctx: ActorContext[TopLevelActorMessage], loggerFactory: LoggerFacto
 
     // Wait for final response, and log result
     submitCommandResponseF.foreach {
-      case _: CommandResponse.Completed => log.info("Command completed successfully")
-      case x: CommandResponse.Error     => log.error(s"Command Completed with error: ${x.message}")
-      case _                            => log.error("Command failed")
+      case _: CommandResponse.Completed =>
+        log.info("[Assembly] Command sent to HCD was completed successfully")
+        println("[Assembly] Command sent to HCD was completed successfully")
+      case x: CommandResponse.Error => log.error(s"Command Completed with error: ${x.message}")
+      case _                        => log.error("Command failed")
     }
   }
 }

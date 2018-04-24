@@ -36,19 +36,20 @@ class SampleAssemblyHandlers(
   val workerActor                           = new Worker(ctx, loggerFactory, componentInfo)
 
   //initialize
-  override def initialize(): Future[Unit] = {
-    log.info("In Assembly initialize")
-    Future.unit
+  override def initialize(): Future[Unit] = Future {
+    log.info("[Assembly] Initializing ...")
+    println("[Assembly] Initializing ...")
   }
 
-  override def onShutdown(): Future[Unit] = {
-    log.info("Assembly is shutting down.")
-    Future.unit
+  override def onShutdown(): Future[Unit] = Future {
+    log.info("[Assembly] Shutting down...")
+    println("[Assembly] Shutting down...")
   }
 
   //track-location
   override def onLocationTrackingEvent(trackingEvent: TrackingEvent): Unit = {
-    log.info(s"onLocationTrackingEvent called: $trackingEvent")
+    log.info(s"[Assembly] Received tracking event : ${trackingEvent.connection.name}")
+    println(s"[Assembly] Received tracking event : ${trackingEvent.connection.name}")
     trackingEvent match {
       case LocationUpdated(location) =>
         val hcd = new CommandService(location.asInstanceOf[AkkaLocation])(ctx.system)
